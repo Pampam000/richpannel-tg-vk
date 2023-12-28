@@ -1,0 +1,40 @@
+version: "3.9"
+
+volumes:
+  pg_data:
+
+services:
+  db:
+    container_name: db
+    image: postgres:15-alpine
+    env_file:
+      - .env
+    command:
+      - "postgres"
+      - "-c"
+      - "timezone=Europe/Moscow"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U user -d database"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    restart: on-failure
+
+  bot:
+    container_name: bot
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python -m app.main
+    volumes:
+      - ./logs/:/logs/
+    depends_on:
+      - db
+      #db:
+        #condition: service_healthy
+    links:
+       - db
+    restart: always
