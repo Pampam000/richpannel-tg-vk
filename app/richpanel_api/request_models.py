@@ -9,22 +9,22 @@ class Base(BaseModel):
 
 
 class Comment(Base):
-    id: str
+    id: str | None = None
     body: str
     sender_type: enums.CommentSenderType
 
 
 class SourceParam(Base):
-    address: str
-    name: str
+
+    name: str | None = None
 
 
 class From(SourceParam):
-    pass
+    address: str
 
 
 class To(SourceParam):
-    pass
+    address: str | None = None
 
 
 class Source(Base):
@@ -41,7 +41,8 @@ class Ticket(Base):
     status: enums.TicketStatusType
     comment: Comment
     via: Via
-    tags: list[str]
+    tags: list[str] | None = None
+    subject: str | None = None
 
 
 class TicketRequest(Base):

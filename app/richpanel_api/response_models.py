@@ -45,7 +45,7 @@ class Ticket(BaseModel):
     comments: list[Comment]
     url: HttpUrl
     satisfaction_rating: dict = {}
-    tags: list[str]
+    tags: list[str] | None = None
     scenarioName: str | None = None
     customFields: CustomFields = {}
 

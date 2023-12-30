@@ -3,8 +3,8 @@ import asyncio_atexit
 
 from app import AsyncClass
 from app.config import RICHPANNEL_TOKEN
-from app.richpanel_api.request_models import TicketRequest
-from app.richpanel_api.response_models import TicketResponse
+from .request_models import TicketRequest
+from .response_models import TicketResponse
 
 
 class Api(AsyncClass):
@@ -30,10 +30,21 @@ class Api(AsyncClass):
 
     async def create_ticket(self, ticket: TicketRequest) -> TicketResponse:
         ticket = ticket.model_dump()
+
         ticket['ticket']['via']['source']['from'] = \
             ticket['ticket']['via']['source']['from_']
         ticket['ticket']['via']['source'].pop('from_')
+
         url = "https://api.richpanel.com/v1/tickets"
-        return await self.session.request(method="POST",
-                                          url=url,
-                                          json=ticket)
+
+        response: aiohttp.ClientResponse = await self.session.request(
+            method="POST",
+            url=url,
+            json=ticket)
+
+        response: dict = await response.json()
+        response['ticket']['via']['source']['from_'] = \
+            response['ticket']['via']['source']['from']
+        response['ticket']['via']['source'].pop('from')
+
+        return TicketResponse(**response)
