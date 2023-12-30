@@ -6,6 +6,9 @@ from pytz.tzinfo import DstTzInfo
 
 load_dotenv()
 
+# richpannel
+RICHPANNEL_TOKEN=os.getenv("RICHPANNEL_TOKEN")
+
 # bot
 BOT_TOKEN = os.getenv('BOT_TOKEN')
 
