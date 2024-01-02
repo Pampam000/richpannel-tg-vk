@@ -14,8 +14,11 @@ class Comment(BaseModel):
     via: dict = {}
     is_operator: bool = True
 
+
 class SourceParam(BaseModel):
     address: str
+
+
 class Source(BaseModel):
     from_: SourceParam
     to: SourceParam
@@ -48,6 +51,7 @@ class Ticket(BaseModel):
     tags: list[str] | None = None
     scenarioName: str | None = None
     customFields: CustomFields = {}
+
 
 class TicketResponse(BaseModel):
     ticket: Ticket

@@ -19,3 +19,11 @@ class ViaChannelType(Enum):
 class TicketStatusType(Enum):
     OPEN = 'OPEN'
     CLOSE = 'CLOSE'
+
+
+class TicketSubjectType(Enum):
+    vk = 'Вконтакте сообщения'
+    tg = 'telegram'
+
+
+

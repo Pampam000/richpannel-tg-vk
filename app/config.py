@@ -7,7 +7,8 @@ from pytz.tzinfo import DstTzInfo
 load_dotenv()
 
 # richpannel
-RICHPANNEL_TOKEN=os.getenv("RICHPANNEL_TOKEN")
+RICHPANNEL_TOKEN = os.getenv("RICHPANNEL_TOKEN")
+RICHPANNEL_BASE_URL = "https://api.richpanel.com"
 
 # bot
 BOT_TOKEN = os.getenv('BOT_TOKEN')
@@ -22,7 +23,6 @@ POSTGRES_PORT = os.getenv('POSTGRES_PORT')
 # admin
 ADMIN_ID = 395573040
 
-
 # date/time formats
 TIMEZONE: DstTzInfo = pytz.timezone('Europe/Moscow')
 DATE_FORMAT = "%d-%m-%Y"
@@ -31,4 +31,3 @@ DATETIME_FORMAT = f"{DATE_FORMAT} {TIME_FORMAT}"
 
 # debug
 DEBUG = True
-
