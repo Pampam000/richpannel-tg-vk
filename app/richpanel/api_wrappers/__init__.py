@@ -1,3 +1,3 @@
-from .conversation.converstion import Conversation
-from .customer.customer import Customer
-from .tag.tag import Tag
+from .conversations.converstion import Conversation
+from .customers.customer import Customer
+from .tags.tag import Tag

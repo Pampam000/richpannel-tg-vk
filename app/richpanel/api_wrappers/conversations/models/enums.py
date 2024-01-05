@@ -8,7 +8,7 @@ class CommentSenderType(Enum):
 
 class ViaChannelType(Enum):
     email = 'email'
-    facebook_message = 'email'
+    facebook_message = 'facebook'
     instagram = 'instagram'
     messenger = 'messenger'
     whatsapp = 'whatsapp'
@@ -22,8 +22,8 @@ class TicketStatusType(Enum):
 
 
 class TicketSubjectType(Enum):
-    vk = 'Вконтакте сообщения'
-    tg = 'telegram'
+    vkontakte = 'Вконтакте сообщения'
+    telegram = 'telegram'
 
 
 

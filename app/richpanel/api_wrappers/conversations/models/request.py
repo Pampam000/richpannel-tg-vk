@@ -1,5 +1,6 @@
 from . import enums
 from ...base.models.request import Base, RetrieveByField
+from ...customers.models.request import Customer
 
 
 class Comment(Base):
@@ -8,29 +9,17 @@ class Comment(Base):
     sender_type: enums.CommentSenderType
 
 
-class SourceParam(Base):
-    id: str | None = None
-    # name: str | None = None
-    # firstName: str| None = None #'as'
-    # lastName: str|None = None#'df'
-    phone: str| None = "+79964102733"
-    #address: str | None = 'test1'
-    name: str | None = 'bob'
-    type: str | None = 'facebook'
-
-
-
-class From(SourceParam):
+class From(Customer):
     pass
 
 
-class To(SourceParam):
+class To(Customer):
     pass
 
 
 class Source(Base):
     from_: From
-    to: To
+    to: To | None = None
 
 
 class Via(Base):
@@ -53,3 +42,16 @@ class UpdateTicket(Base):
 
 class TicketRequest(Base):
     ticket: Ticket | UpdateTicket
+
+
+__all__ = [
+    "Comment",
+    "From",
+    "To",
+    "Source",
+    "Via",
+    "Ticket",
+    "UpdateTicket",
+    "TicketRequest",
+    "RetrieveByField",
+]

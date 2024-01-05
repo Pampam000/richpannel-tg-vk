@@ -6,22 +6,29 @@ from pytz.tzinfo import DstTzInfo
 
 load_dotenv()
 
+# common
+APP_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(APP_DIR)
+
 # richpannel
 RICHPANNEL_TOKEN = os.getenv("RICHPANNEL_TOKEN")
 RICHPANNEL_BASE_URL = "https://api.richpanel.com"
 
 # bot
 BOT_TOKEN = os.getenv('BOT_TOKEN')
+BOT_START_MSG = "Здравствуйте! Здесь общается не бот, а живые люди, " \
+                "поэтому ответ может занять какое-то время, спасибо за " \
+                "понимание"
+ADMIN_ID = 395573040
+
+# vk
+VK_GROUP_TOKEN = os.getenv('VK_GROUP_TOKEN')
+VK_BASE_URL = "https://api.vk.ru"
+VK_API_VERSION = "5.199"
 
 # Db
-POSTGRES_USER = os.getenv('POSTGRES_USER')
-POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
-POSTGRES_DB = os.getenv('POSTGRES_DB')
-POSTGRES_HOST = os.getenv('POSTGRES_HOST')
-POSTGRES_PORT = os.getenv('POSTGRES_PORT')
-
-# admin
-ADMIN_ID = 395573040
+DB_NAME = 'db.sqlite3'
+DB_PATH = os.path.join(ROOT_DIR, DB_NAME)
 
 # date/time formats
 TIMEZONE: DstTzInfo = pytz.timezone('Europe/Moscow')
