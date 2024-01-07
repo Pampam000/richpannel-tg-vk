@@ -2,6 +2,7 @@ from app import AsyncClass
 
 from app.config import RICHPANNEL_TOKEN, RICHPANNEL_BASE_URL
 from .api_wrappers import Conversation, Customer, Tag
+from .api_wrappers.downloads.download import Download
 
 
 class Api(AsyncClass):
@@ -19,4 +20,5 @@ class Api(AsyncClass):
         self.conversation = Conversation(self)
         self.customer = Customer(self)
         self.tag = Tag(self)
+        self.download = Download(self)
 

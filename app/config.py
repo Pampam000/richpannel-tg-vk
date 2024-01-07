@@ -12,7 +12,7 @@ ROOT_DIR = os.path.dirname(APP_DIR)
 
 # richpannel
 RICHPANNEL_TOKEN = os.getenv("RICHPANNEL_TOKEN")
-RICHPANNEL_BASE_URL = "https://api.richpanel.com"
+RICHPANNEL_BASE_URL = "https://api.richpanel.com/v1/"
 
 # bot
 BOT_TOKEN = os.getenv('BOT_TOKEN')
@@ -23,7 +23,7 @@ ADMIN_ID = 395573040
 
 # vk
 VK_GROUP_TOKEN = os.getenv('VK_GROUP_TOKEN')
-VK_BASE_URL = "https://api.vk.ru"
+VK_BASE_URL = "https://api.vk.ru/method/"
 VK_API_VERSION = "5.199"
 
 # Db

@@ -17,8 +17,10 @@ class AsyncClass:
     async def _prepare_session(self) -> None:
         self.session = aiohttp.ClientSession(
             connector=aiohttp.TCPConnector(limit=10),
-            base_url=self.base_url)
-        self.session.headers.update(self.headers)
+            #trust_env=True,
+            #base_url=self.base_url
+            )
+        #self.session.headers.update(self.headers)
         asyncio_atexit.register(self._close_session)
 
     async def _close_session(self) -> None:
