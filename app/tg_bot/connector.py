@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 from app import db
 from app.config import BOT_TOKEN
 from app.create_instances import richpannel_api, bot
+from app.logger import logger
 
 
 class TGRichpanelConnector:
@@ -13,11 +14,14 @@ class TGRichpanelConnector:
         self.message = message
         self.user = message.from_user
         self.user_id = str(self.user.id)
+
         self.user_fullname = self.user.full_name
         self.text = message.text
         self.attachment = None
         self.processed_attachment = None
         self.ticket_id: str | None = None
+        logger.debug(f'TG:{self.user_id} sent message(text={self.text}'
+                     f'attachment={self.attachment}')
 
     async def process_attachment(self):
         if not (self.message.photo or self.message.document):
@@ -41,11 +45,14 @@ class TGRichpanelConnector:
             email=self.user_id,
             name=self.user_fullname,
         )
+        logger.debug(f'TG:{self.user_id} got customer_response='
+                     f'{customer_response}')
         if 'error' in customer_response:
+            logger.debug(f'TG:{self.user_id} customer already exists')
             self.ticket_id = await db.get_customer_ticket_id(
                 email=self.user_id
             )
-
+            logger.debug(f'TG:{self.user_id} - ticket_id={self.ticket_id}')
             if self.ticket_id:
                 await self._send_message_if_ticket_is_open()
             else:
@@ -58,26 +65,33 @@ class TGRichpanelConnector:
             ticket_id=self.ticket_id,
             message=self._create_richpannel_message()
         )
+        logger.debug(f'TG:{self.user_id} got an update response='
+                     f'{update_response}')
         await self._send_message(response=update_response)
 
     async def _send_message_if_ticket_is_closed(self):
         message_response, self.ticket_id = await \
             self._get_message_response_and_ticket_id()
+        logger.debug(f'TG:{self.user_id} got a message_response='
+                     f'{message_response} and ticket_id={self.ticket_id}')
         await db.update_customer_ticket_id(
             email=self.user_id,
             ticket_id=self.ticket_id
         )
+        logger.debug(f'TG:{self.user_id} updated ticket_id in db')
         await self._send_message(response=message_response)
 
     async def _send_message_if_no_ticket(self):
         message_response, self.ticket_id = await \
             self._get_message_response_and_ticket_id()
+        logger.debug(f'TG:{self.user_id} got a message_response='
+                     f'{message_response} and ticket_id={self.ticket_id}')
         await db.create_customer(
             email=self.user_id,
             messenger_id=2,
             ticket_id=self.ticket_id
         )
-
+        logger.debug(f'TG:{self.user_id} created new instance in db')
         await self._send_message(response=message_response)
 
     def _create_richpannel_message(self) -> str:
@@ -86,28 +100,32 @@ class TGRichpanelConnector:
 
     async def _send_message(self, response: dict):
         comments_amount = len(response['ticket']['comments'])
-
+        logger.debug(f'TG:{self.user_id} got comments_amount='
+                     f'{comments_amount}')
         operator_message, attachments = await (
             self._check_operator_answer(
                 comments_amount=comments_amount,
                 ticket_id=self.ticket_id
             ))
+        logger.debug(f'TG:{self.user_id} got operator_message = '
+                     f'{operator_message} and attachments = {attachments}')
         text = None
 
         if operator_message:
             text = self._parse_html(operator_message)
             if 'Files Attached' in text:
                 text = None
+        logger.debug(f'TG:{self.user_id} has a text = {text}')
 
         if not attachments:
+            logger.debug(f'TG:{self.user_id} sending message')
             if text:
                 await self.message.answer(text=text)
             return
 
         for num, attachment in enumerate(attachments):
             if attachment.endswith('.pdf'):
-                # if attachment[1] == 'pdf':
-
+                logger.debug(f'TG:{self.user_id} sending pdf')
                 await bot.send_document(
                     chat_id=self.user_id,
                     document=attachment,
@@ -115,6 +133,7 @@ class TGRichpanelConnector:
                 )
             elif attachment.endswith('png') or attachment.endswith('jpg') or \
                     attachment.endswith('jpeg'):
+                logger.debug(f'TG:{self.user_id} sending photo')
                 await bot.send_photo(
                     chat_id=self.user_id,
                     photo=attachment,
@@ -143,8 +162,9 @@ class TGRichpanelConnector:
             response = await richpannel_api.conversation.retrieve_ticket(
                 ticket_id=ticket_id
             )
-
+            logger.debug(f'TG:{self.user_id} retrieved ticket = {response}')
             if 'error' in response:
+                logger.debug(f'TG:{self.user_id} ticket is not created yet')
                 await asyncio.sleep(10)
                 continue
             comments = response['ticket']['comments']

@@ -3,4 +3,4 @@ venv
 .env
 __pycache__
 biba.py
-db.sqlite3
+#db.sqlite3

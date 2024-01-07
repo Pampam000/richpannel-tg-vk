@@ -22,7 +22,3 @@ async def get_text_message(message: Message):
             message=message
         ).process_message()
     )
-
-
-
-
