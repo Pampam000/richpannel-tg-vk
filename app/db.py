@@ -116,7 +116,6 @@ async def unset_customer_ticket_id(
         conn: Connection,
         email: str,
 ):
-
     ticket_result: list[tuple] = await conn.execute_fetchall(
         "SELECT ticket_id FROM customers WHERE email = ?",
         (email,)

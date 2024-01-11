@@ -1,4 +1,6 @@
 from app import AsyncClass, config as cf
+from app.vk.api_wrappers.files.documents.document import Document
+from app.vk.api_wrappers.files.photos.photo import Photo
 from .api_wrappers.messages.message import Message
 from .api_wrappers.users.user import User
 
@@ -7,8 +9,6 @@ class Api(AsyncClass):
     base_url = cf.VK_BASE_URL
 
     headers = {
-        "accept": "application/json",
-        "content-type": "application/json",
         "authorization": f"Bearer {cf.VK_GROUP_TOKEN}"
     }
 
@@ -17,3 +17,5 @@ class Api(AsyncClass):
 
         self.user = User(self)
         self.message = Message(self)
+        self.photo = Photo(self)
+        self.document = Document(self)

@@ -1,8 +1,6 @@
 import os
 
-import pytz
 from dotenv import load_dotenv
-from pytz.tzinfo import DstTzInfo
 
 load_dotenv()
 
@@ -13,6 +11,7 @@ ROOT_DIR = os.path.dirname(APP_DIR)
 # richpannel
 RICHPANNEL_TOKEN = os.getenv("RICHPANNEL_TOKEN")
 RICHPANNEL_BASE_URL = "https://api.richpanel.com/v1/"
+POLLING_TIMEOUT_BETWEEN_REQUESTS_IN_SECONDS = 10
 
 # bot
 BOT_TOKEN = os.getenv('BOT_TOKEN')
@@ -30,11 +29,17 @@ VK_API_VERSION = "5.199"
 DB_NAME = 'db.sqlite3'
 DB_PATH = os.path.join(ROOT_DIR, DB_NAME)
 
-# date/time formats
-TIMEZONE: DstTzInfo = pytz.timezone('Europe/Moscow')
-DATE_FORMAT = "%d-%m-%Y"
-TIME_FORMAT = "%H:%M"
-DATETIME_FORMAT = f"{DATE_FORMAT} {TIME_FORMAT}"
-
 # debug
 DEBUG = True
+
+# file extensions
+DOCUMENT_EXTENSIONS = ['doc', 'docx', 'pdf', 'txt', 'rtf', 'odt',
+                       'ppt', 'pptx', 'xls', 'xlsx', 'csv', 'html',
+                       'xml', 'json', 'md', 'tex', 'zip']
+
+PHOTO_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'tiff', 'webp',
+                    'svg', 'raw', 'ico', 'heif']
+
+VIDEO_EXTENSIONS = ['mp4', 'avi', 'mkv', 'mov', 'wmv', 'flv', 'webm',
+                    'm4v', 'mpeg', 'mpg', '3gp', 'rm', 'swf', 'vob',
+                    'ogg']

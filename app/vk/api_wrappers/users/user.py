@@ -8,6 +8,11 @@ class User(BaseVkWrapper):
     async def get_user_by_id(self, user_id: str) -> UserModel:
         response: dict = await self._request(
             method="GET",
-            url=self.url + f'.get?v={self.api_version}&user_ids={user_id}')
+            url=self.url + f'.get',
+            params={
+                'v': self.api_version,
+                'user_ids': user_id
+            }
+        )
 
         return UserModel(**response['response'][0])

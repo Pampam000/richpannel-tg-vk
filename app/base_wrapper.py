@@ -1,4 +1,4 @@
-import json as js
+import asyncio
 from typing import Any
 
 from aiohttp import ClientResponse
@@ -34,6 +34,17 @@ class BaseWrapper:
             headers=headers,
 
         )
+        if response.status == 429:
+            await asyncio.sleep(5)
+            return await self._request(
+                method=method,
+                url=url,
+                json=json,
+                data=data,
+                params=params,
+                use_base=use_base,
+                headers=headers
+            )
         return await self._process_response(response=response)
 
     @staticmethod

@@ -15,10 +15,8 @@ async def start(message: Message):
     await message.answer(cf.BOT_START_MSG)
 
 
-@router.message(F.text | F.document | F.photo)
+@router.message(F.text | F.document | F.photo | F.video)
 async def get_text_message(message: Message):
-    asyncio.ensure_future(
-        TGRichpanelConnector(
-            message=message
-        ).process_message()
-    )
+    await TGRichpanelConnector(message=message).process_message()
+
+
