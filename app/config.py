@@ -22,6 +22,7 @@ ADMIN_ID = 395573040
 
 # vk
 VK_GROUP_TOKEN = os.getenv('VK_GROUP_TOKEN')
+VK_USER_TOKEN = os.getenv('VK_USER_TOKEN')
 VK_BASE_URL = "https://api.vk.ru/method/"
 VK_API_VERSION = "5.199"
 

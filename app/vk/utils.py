@@ -30,17 +30,17 @@ async def send_operator_message(
             'file_format': extension
         }
         if extension in cf.DOCUMENT_EXTENSIONS:
-            processed_attachment: dict = await vk_api.document.upload(
+            processed_attachment: str = await vk_api.document.upload(
                 **request_kwargs
             )
         elif extension in cf.PHOTO_EXTENSIONS:
-            processed_attachment: dict = await vk_api.photo.upload(
+            processed_attachment: str = await vk_api.photo.upload(
                 **request_kwargs
             )
-        #elif extension in cf.VIDEO_EXTENSIONS:
-        #    processed_attachment: dict = await vk_api.video.upload(
-        #        **request_kwargs
-        #    )
+        elif extension in cf.VIDEO_EXTENSIONS:
+            processed_attachment: str = await vk_api.video.upload(
+                **request_kwargs
+            )
         if not processed_attachment:
             continue
         processed_attachments.append(processed_attachment)

@@ -37,10 +37,8 @@ class Conversation(BaseRichpannelWrapper):
         )
 
     async def _create_ticket(self, ticket: TicketRequest) -> dict:
-        ticket = ticket.model_dump()
+        ticket:dict = ticket.model_dump()
 
-        print(111, ticket)
-        print()
         ticket['ticket']['via']['source']['from'] = \
             ticket['ticket']['via']['source']['from_']
         ticket['ticket']['via']['source'].pop('from_')
@@ -49,12 +47,10 @@ class Conversation(BaseRichpannelWrapper):
             method="POST",
             url=self.url,
             json=ticket)
-        print(0, response)
-        print()
+
         # response['ticket']['via']['source']['from_'] = \
         #    response['ticket']['via']['source']['from']
         # response['ticket']['via']['source'].pop('from')
-        # print(11, response)
         # return TicketResponse(**response)
         return response
 
@@ -74,7 +70,6 @@ class Conversation(BaseRichpannelWrapper):
             url=self.url + f'/{ticket.by}/{ticket.value}'
 
         )
-        print(33, response)
         return response
 
     async def update_ticket(self,

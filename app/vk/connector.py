@@ -24,7 +24,7 @@ class VKRichpanelConnector:
         self.request: dict = await request.json()
         self.message: dict = self.request['object']['message']
         self.attachments: list = self.message['attachments']
-        self.process_attachments()
+        await self.process_attachments()
         self.text: str = self.message['text']
 
         user_id = self.message['from_id']
@@ -165,10 +165,14 @@ class VKRichpanelConnector:
         return attachment['photo']['sizes'][-1]['url']
 
     @staticmethod
-    def _get_video_link(attachment: dict) -> str:
-        return attachment['video']['image'][-1]['url']
+    async def _get_video_link(attachment: dict) -> str:
+        print(attachment)
+        return await vk_api.video.get(
+            owner_id=attachment['video']['owner_id'],
+            video_id=attachment['video']['id']
+        )
 
-    def process_attachments(self):
+    async def process_attachments(self):
         for attachment in self.attachments:
             if attachment['type'] == 'photo':
                 processed_attachment = self._get_photo_link(attachment)
@@ -177,7 +181,7 @@ class VKRichpanelConnector:
                 processed_attachment = self._get_doc_link(attachment)
                 self.processed_attachments.append(processed_attachment)
             elif attachment['type'] == 'video':
-                processed_attachment = self._get_video_link(attachment)
+                processed_attachment = await self._get_video_link(attachment)
                 self.processed_attachments.append(processed_attachment)
 
     def _create_richpannel_message(self):
