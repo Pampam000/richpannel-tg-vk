@@ -32,7 +32,11 @@ class TGRichpanelConnector:
 
     async def process_attachment(self):
         if not (
-                self.message.photo or self.message.document or self.message.video):
+                self.message.photo or
+                self.message.document or
+                self.message.video or
+                self.message.sticker
+        ):
             return
 
         if self.message.caption:
@@ -48,6 +52,10 @@ class TGRichpanelConnector:
 
         elif self.message.video:
             file_id: str = self.message.video.file_id
+            await self._create_attachment_from_tg_file(file_id=file_id)
+
+        elif self.message.sticker:
+            file_id: str = self.message.sticker.file_id
             await self._create_attachment_from_tg_file(file_id=file_id)
 
     async def process_message(self):

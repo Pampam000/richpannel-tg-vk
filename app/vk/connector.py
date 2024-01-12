@@ -166,22 +166,27 @@ class VKRichpanelConnector:
 
     @staticmethod
     async def _get_video_link(attachment: dict) -> str:
-        print(attachment)
         return await vk_api.video.get(
             owner_id=attachment['video']['owner_id'],
             video_id=attachment['video']['id']
         )
-
+    @staticmethod
+    def _get_sticker_link(attachment:dict) -> str:
+        return attachment['sticker']['images'][-1]['url']
     async def process_attachments(self):
         for attachment in self.attachments:
+            processed_attachment = None
+
             if attachment['type'] == 'photo':
                 processed_attachment = self._get_photo_link(attachment)
-                self.processed_attachments.append(processed_attachment)
             elif attachment['type'] == 'doc':
                 processed_attachment = self._get_doc_link(attachment)
-                self.processed_attachments.append(processed_attachment)
             elif attachment['type'] == 'video':
                 processed_attachment = await self._get_video_link(attachment)
+            elif attachment['type'] == 'sticker':
+                processed_attachment = self._get_sticker_link(attachment)
+
+            if processed_attachment:
                 self.processed_attachments.append(processed_attachment)
 
     def _create_richpannel_message(self):

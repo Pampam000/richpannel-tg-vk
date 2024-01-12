@@ -32,7 +32,6 @@ class Video(File):
             headers={'authorization': f'Bearer {cf.VK_USER_TOKEN}'}
         )
         response: dict = await response.json()
-        print(response)
         return response['response']['upload_url']
 
     async def _save(self, data: dict):
