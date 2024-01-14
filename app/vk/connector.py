@@ -1,7 +1,5 @@
 import asyncio
 
-from aiohttp.web_request import Request
-
 from app.create_instances import richpannel_api, vk_api
 from . import utils
 from .api_wrappers.users.models.response import UserModel
@@ -11,8 +9,8 @@ from ..task import check_second_operator_answer, pop_task
 
 
 class VKRichpanelConnector:
-    def __init__(self):
-        self.request = None
+    def __init__(self, request: dict):
+        self.request = request
         self.message = None
         self.user_id = None
         self.attachments = None
@@ -20,8 +18,7 @@ class VKRichpanelConnector:
         self.ticket_id = None
         self.processed_attachments = []
 
-    async def process_request(self, request: Request):
-        self.request: dict = await request.json()
+    async def process_request(self):
         self.message: dict = self.request['object']['message']
         self.attachments: list = self.message['attachments']
         await self.process_attachments()
@@ -102,7 +99,7 @@ class VKRichpanelConnector:
         return message_response, ticket_id
 
     async def _send_message(self, response: dict, check: bool = False):
-        pop_task(ticket_id=self.ticket_id)
+        # pop_task(ticket_id=self.ticket_id)
         comments_amount = len(response['ticket']['comments'])
         logger.debug(f'{self.user_id} got comments_amount='
                      f'{comments_amount}')
@@ -125,12 +122,12 @@ class VKRichpanelConnector:
             attachments=attachments
         )
 
-        await check_second_operator_answer(
-            ticket_id=self.ticket_id,
-            sleep_time=30,
-            service_name='vk',
-            user_id=self.user_id
-        )
+        # await check_second_operator_answer(
+        #    ticket_id=self.ticket_id,
+        #    sleep_time=30,
+        #    service_name='vk',
+        #    user_id=self.user_id
+        # )
 
     async def _check_operator_answer(
             self,
@@ -144,17 +141,20 @@ class VKRichpanelConnector:
                 ticket_id=ticket_id
             )
             logger.debug(f'{self.user_id} retrieved ticket = {response}')
-            if 'error' in response:
-                logger.debug(f'{self.user_id} IT IS NORMAL IF ERROR IN '
-                             f'RESPONSE!!!!')
-                await asyncio.sleep(10)
-                continue
+
             comments = response['ticket']['comments']
             comments_amount = len(comments)
             if a < comments_amount and comments[-1]['is_operator']:
                 break
             await asyncio.sleep(10)
-        return comments[-1]['body'], comments[-1]['attachments']
+
+        if comments[-1]['body'].startswith(
+                '{"actionName":"HTTP_TARGET_TRIGGERED_TO_COVERSATION"'):
+            comment = comments[-2]
+        else:
+            comment = comments[-1]
+        return comment['body'], comment['attachments']
+
 
     @staticmethod
     def _get_doc_link(attachment: dict) -> str:
@@ -170,9 +170,11 @@ class VKRichpanelConnector:
             owner_id=attachment['video']['owner_id'],
             video_id=attachment['video']['id']
         )
+
     @staticmethod
-    def _get_sticker_link(attachment:dict) -> str:
+    def _get_sticker_link(attachment: dict) -> str:
         return attachment['sticker']['images'][-1]['url']
+
     async def process_attachments(self):
         for attachment in self.attachments:
             processed_attachment = None

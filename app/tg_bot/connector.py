@@ -6,7 +6,6 @@ from app import config as cf
 from app import db
 from app.create_instances import richpannel_api, bot
 from app.logger import logger
-from app.task import check_second_operator_answer, pop_task
 from app.tg_bot import utils
 
 
@@ -132,7 +131,7 @@ class TGRichpanelConnector:
         return not (comments[-1]['is_operator'] or comments[-2]['is_operator'])
 
     async def _send_message(self, response: dict, check: bool = False):
-        pop_task(ticket_id=self.ticket_id)
+        # pop_task(ticket_id=self.ticket_id)
         comments_amount = len(response['ticket']['comments'])
         logger.debug(f'{self.user_id} got comments_amount='
                      f'{comments_amount}')
@@ -156,12 +155,12 @@ class TGRichpanelConnector:
             attachments=attachments,
         )
 
-        await check_second_operator_answer(
-            ticket_id=self.ticket_id,
-            sleep_time=30,
-            service_name='tg',
-            user_id=self.user_id
-        )
+        # await check_second_operator_answer(
+        #     ticket_id=self.ticket_id,
+        #     sleep_time=30,
+        #     service_name='tg',
+        #     user_id=self.user_id
+        # )
 
     async def _get_message_response_and_ticket_id(self):
         message_response = await richpannel_api.conversation.create_ticket(
@@ -185,16 +184,11 @@ class TGRichpanelConnector:
             response = await richpannel_api.conversation.retrieve_ticket(
                 ticket_id=ticket_id
             )
-            logger.debug(f'TG:{self.user_id} IT IS NORMAL IF ERROR IN '
-                         f'RESPONSE!!!!')
-            logger.debug(f'TG:{self.user_id} retrieved ticket = {response}')
-            if 'error' in response:
-                logger.debug(f'TG:{self.user_id} ticket is not created yet')
-                await asyncio.sleep(10)
-                continue
+
+            logger.debug(f'{self.user_id} retrieved ticket = {response}')
 
             if response['ticket']['status'] == "CLOSED":
-                await db.unset_customer_ticket_id(email=self.user_id)
+                await db.unset_customer_ticket_id(ticket_id=self.ticket_id)
                 raise TypeError('!!!TICKET CLOSED!!!')
             comments = response['ticket']['comments']
             comments_amount = len(comments)
@@ -203,4 +197,9 @@ class TGRichpanelConnector:
                 break
             await asyncio.sleep(10)
 
-        return comments[-1]['body'], comments[-1]['attachments']  # if
+        if comments[-1]['body'].startswith(
+                '{"actionName":"HTTP_TARGET_TRIGGERED_TO_COVERSATION"'):
+            comment = comments[-2]
+        else:
+            comment = comments[-1]
+        return comment['body'], comment['attachments']

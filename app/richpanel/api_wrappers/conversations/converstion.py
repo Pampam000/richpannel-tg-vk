@@ -1,5 +1,5 @@
 from .models import TicketRequest, UpdateTicket, \
-    RetrieveByField, Ticket, From, To, Comment, Via, Source
+    Ticket, From, To, Comment, Via, Source
 from .models.enums import TicketStatusType, CommentSenderType, \
     TicketSubjectType, ViaChannelType
 from ..base.base_wrapper import BaseRichpannelWrapper
@@ -37,39 +37,33 @@ class Conversation(BaseRichpannelWrapper):
         )
 
     async def _create_ticket(self, ticket: TicketRequest) -> dict:
-        ticket:dict = ticket.model_dump()
+        ticket_dict: dict = ticket.model_dump()
 
-        ticket['ticket']['via']['source']['from'] = \
-            ticket['ticket']['via']['source']['from_']
-        ticket['ticket']['via']['source'].pop('from_')
+        ticket_dict['ticket']['via']['source']['from'] = \
+            ticket_dict['ticket']['via']['source']['from_']
+        ticket_dict['ticket']['via']['source'].pop('from_')
 
         response: dict = await self._request(
             method="POST",
             url=self.url,
-            json=ticket)
+            json=ticket_dict,
+        )
 
         # response['ticket']['via']['source']['from_'] = \
         #    response['ticket']['via']['source']['from']
         # response['ticket']['via']['source'].pop('from')
         # return TicketResponse(**response)
-        return response
+        if response:
+            return response
+        else:
+            return self._create_ticket(ticket=ticket)
 
     async def retrieve_ticket(self, ticket_id: str):
         response: dict = await self._request(
             method="GET",
             url=self.url + f'/{ticket_id}'
         )
-        return response
 
-    async def retrieve_ticket_using_customers_email_or_phone(
-            self,
-            ticket: RetrieveByField
-    ):
-        response: dict = await self._request(
-            method="GET",
-            url=self.url + f'/{ticket.by}/{ticket.value}'
-
-        )
         return response
 
     async def update_ticket(self,
@@ -94,15 +88,18 @@ class Conversation(BaseRichpannelWrapper):
         return await self._update_ticket(ticket_id=ticket_id, ticket=ticket)
 
     async def _update_ticket(self, ticket_id: str, ticket: TicketRequest):
-        ticket = ticket.model_dump(exclude_none=True)
+        ticket_dict = ticket.model_dump(exclude_none=True)
 
-        ticket['ticket']['via']['source']['from'] = \
-            ticket['ticket']['via']['source']['from_']
-        ticket['ticket']['via']['source'].pop('from_')
+        ticket_dict['ticket']['via']['source']['from'] = \
+            ticket_dict['ticket']['via']['source']['from_']
+        ticket_dict['ticket']['via']['source'].pop('from_')
 
-        response: dict = await self._request(
+        response: dict | None = await self._request(
             method="PUT",
             url=self.url + f'/{ticket_id}',
-            json=ticket
+            json=ticket_dict
         )
-        return response
+        if response:
+            return response
+        else:
+            return await self.retrieve_ticket(ticket_id=ticket_id)

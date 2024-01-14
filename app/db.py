@@ -77,7 +77,7 @@ async def create_customer(conn: Connection,
     )
 
     await conn.execute(
-        'INSERT INTO customers (email, messenger_id, ticket_id)' \
+        'INSERT INTO customers (email, messenger_id, ticket_id)'
         'VALUES (?, ?, ?)',
         (email, messenger_id, ticket_id)
     )
@@ -114,15 +114,25 @@ async def update_customer_ticket_id(conn: Connection,
 @with_connection
 async def unset_customer_ticket_id(
         conn: Connection,
-        email: str,
+        ticket_id: str,
 ):
-    ticket_result: list[tuple] = await conn.execute_fetchall(
-        "SELECT ticket_id FROM customers WHERE email = ?",
-        (email,)
-    )
-    ticket_id: str = ticket_result[0][0]
+    #ticket_result: list[tuple] = await conn.execute_fetchall(
+    #    "SELECT ticket_id FROM customers WHERE email = ?",
+    #    (email,)
+    #)
+    #ticket_id: str = ticket_result[0][0]
     await conn.execute(
         'DELETE FROM tickets WHERE id = ?',
         (ticket_id,)
     )
     await conn.commit()
+@with_connection
+async def get_customers_by_ticket_id(
+        conn:Connection,
+        ticket_id: str
+) -> list[tuple]:
+    return await conn.execute_fetchall(
+        'SELECT email, messenger_id FROM customers WHERE ticket_id = ?',
+        (ticket_id,)
+    )
+

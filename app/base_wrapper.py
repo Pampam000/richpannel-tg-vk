@@ -1,4 +1,3 @@
-import asyncio
 from typing import Any
 
 from aiohttp import ClientResponse
@@ -23,8 +22,11 @@ class BaseWrapper:
             use_base: bool = True,
             headers: dict | None = None,
     ) -> dict | Any:
+        request_kwargs = locals().copy()
+        request_kwargs.pop('self')
         if headers is None:
             headers = self.api.headers
+
         response: ClientResponse = await self.session.request(
             method=method,
             url=self._format_url(url=url, use_base=use_base),
@@ -34,21 +36,15 @@ class BaseWrapper:
             headers=headers,
 
         )
-        if response.status == 429:
-            await asyncio.sleep(5)
-            return await self._request(
-                method=method,
-                url=url,
-                json=json,
-                data=data,
-                params=params,
-                use_base=use_base,
-                headers=headers
-            )
-        return await self._process_response(response=response)
 
-    @staticmethod
-    async def _process_response(response: ClientResponse) -> dict | Any:
+        return await self._process_response(response=response,
+                                            request_kwargs=request_kwargs)
+
+    async def _process_response(
+            self,
+            response: ClientResponse,
+            request_kwargs: dict | None = None
+    ) -> dict | Any:
         return await response.json()
 
     def _format_url(self, url: str, use_base: bool) -> str:
