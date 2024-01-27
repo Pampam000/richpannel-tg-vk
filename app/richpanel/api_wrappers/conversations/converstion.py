@@ -53,10 +53,8 @@ class Conversation(BaseRichpannelWrapper):
         #    response['ticket']['via']['source']['from']
         # response['ticket']['via']['source'].pop('from')
         # return TicketResponse(**response)
-        if response:
-            return response
-        else:
-            return self._create_ticket(ticket=ticket)
+        return response
+
 
     async def retrieve_ticket(self, ticket_id: str):
         response: dict = await self._request(

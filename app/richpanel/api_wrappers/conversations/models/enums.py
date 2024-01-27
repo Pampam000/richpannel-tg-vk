@@ -24,6 +24,7 @@ class TicketStatusType(Enum):
 class TicketSubjectType(Enum):
     vkontakte = 'Вконтакте сообщения'
     telegram = 'telegram'
+    vk_wall = 'Вконтакте коментарии'
 
 
 

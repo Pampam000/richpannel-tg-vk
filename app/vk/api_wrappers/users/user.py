@@ -14,5 +14,4 @@ class User(BaseVkWrapper):
                 'user_ids': user_id
             }
         )
-
         return UserModel(**response['response'][0])

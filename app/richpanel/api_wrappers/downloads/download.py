@@ -20,6 +20,7 @@ class Download(BaseRichpannelWrapper):
     def get_file_extension(url: str) -> str:
         return url.split('.')[-1]
 
-    @staticmethod
-    async def _process_response(response: ClientResponse) -> dict | Any:
+    async def _process_response(self, response: ClientResponse,
+                                request_kwargs: dict | None = None) -> (dict |
+                                                                        Any):
         return response

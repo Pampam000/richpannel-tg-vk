@@ -31,7 +31,7 @@ class BaseRichpannelWrapper(BaseWrapper):
                 request_kwargs=request_kwargs,
         ):
             return
-        elif result:=await self._check_conversation_does_not_exist(
+        elif result := await self._check_conversation_does_not_exist(
                 response=response,
                 request_kwargs=request_kwargs,
         ):
@@ -63,12 +63,14 @@ class BaseRichpannelWrapper(BaseWrapper):
         if 'errors' in response and 'message' in response['errors']:
             if response['errors']['message'] == ('Provided conversation id '
                                                  'does not exist.'):
-                logger.debug('NO CONVESATION WITH THE GIVEN ID')
+                logger.debug(f'NO CONVESATION WITH THE GIVEN ID '
+                             f'{request_kwargs["url"]}')
                 await asyncio.sleep(10)
                 return await self._request(**request_kwargs)
         elif 'error' in response and 'message' in response['error']:
             if response['error']['message'] == ('No conversations found with '
                                                 'the given Id.'):
-                logger.debug('NO CONVESATION WITH THE GIVEN ID')
+                logger.debug(f'NO CONVESATION WITH THE GIVEN ID '
+                             f'{request_kwargs["url"]}')
                 await asyncio.sleep(10)
                 return await self._request(**request_kwargs)

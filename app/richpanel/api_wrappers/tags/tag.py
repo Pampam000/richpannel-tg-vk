@@ -14,3 +14,4 @@ class Tag(BaseRichpannelWrapper):
         for tag in tags:
             if tag['name'] == name:
                 return tag['id']
+        return ''

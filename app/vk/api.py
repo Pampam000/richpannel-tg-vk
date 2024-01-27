@@ -1,9 +1,11 @@
 from app import AsyncClass, config as cf
 from app.vk.api_wrappers.files.documents.document import Document
 from app.vk.api_wrappers.files.photos.photo import Photo
+from .api_wrappers.files.photos_comments.photo_comment import PhotoComment
 from .api_wrappers.files.videos.video import Video
 from .api_wrappers.messages.message import Message
 from .api_wrappers.users.user import User
+from .api_wrappers.wall.wall import Wall
 
 
 class Api(AsyncClass):
@@ -21,3 +23,5 @@ class Api(AsyncClass):
         self.photo = Photo(self)
         self.document = Document(self)
         self.video = Video(self)
+        self.wall = Wall(self)
+        self.photo_comment = PhotoComment(self)

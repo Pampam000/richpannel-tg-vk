@@ -10,12 +10,13 @@ class File(BaseVkWrapper):
     form_data_field_name: str | None = None
     url: str | None = None
     save_method: str | None = None
+    upload_method: str = '.getMessagesUploadServer'
 
     async def upload(
             self,
-            peer_id: str | int,
             file: bytes,
-            file_format: str
+            file_format: str,
+            peer_id: str | int | None = None,
     ):
         url: str = await self._get_upload_url(peer_id=peer_id)
 
@@ -38,7 +39,7 @@ class File(BaseVkWrapper):
     async def _get_upload_url(self, peer_id: str | int):
         response: ClientResponse = await self._request(
             method='GET',
-            url=self.url + f'.getMessagesUploadServer',
+            url=self.url + self.upload_method,
             params={
                 'v': self.api_version,
                 'peer_id': peer_id,
@@ -50,6 +51,7 @@ class File(BaseVkWrapper):
     async def _save(self, data: dict):
         raise NotImplementedError
 
-    @staticmethod
-    async def _process_response(response: ClientResponse) -> dict | Any:
+    async def _process_response(self, response: ClientResponse,
+                                request_kwargs: dict | None = None) -> (dict |
+                                                                        Any):
         return response

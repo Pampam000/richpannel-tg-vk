@@ -39,7 +39,8 @@ DOCUMENT_EXTENSIONS = ['doc', 'docx', 'pdf', 'txt', 'rtf', 'odt',
                        'xml', 'json', 'md', 'tex', 'zip']
 
 PHOTO_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'tiff', 'webp',
-                    'svg', 'raw', 'ico', 'heif']
+                    'svg', 'raw', 'ico', 'heif', 'psd', 'ai', 'procreate',
+                    'cdr']
 
 VIDEO_EXTENSIONS = ['mp4', 'avi', 'mkv', 'mov', 'wmv', 'flv', 'webm',
                     'm4v', 'mpeg', 'mpg', '3gp', 'rm', 'swf', 'vob',
