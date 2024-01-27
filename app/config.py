@@ -18,7 +18,7 @@ BOT_TOKEN = os.getenv('BOT_TOKEN')
 BOT_START_MSG = "Здравствуйте! Здесь общается не бот, а живые люди, " \
                 "поэтому ответ может занять какое-то время, спасибо за " \
                 "понимание"
-ADMIN_ID = 395573040
+DEVELOPER_ID = 395573040
 
 # vk
 VK_GROUP_TOKEN = os.getenv('VK_GROUP_TOKEN')
